@@ -11,7 +11,7 @@ Thank you for considering contributing to our WechatSDK snippets repository! I w
 1. Fork the repository to your GitHub account.（将存储库 Fork 到您的 GitHub 帐户）
 2. Clone the forked repository to your local machine: （将分叉存储库克隆到本地计算机）
    ```
-   git clone https://github.com/kawika-git/wechatSDK.git
+   git clone https://github.com/WeChatAPIs/wechatSDK.git
    ```
 3. Create a new branch for your changes: （为您的变更创建一个新的分支）
    ```
