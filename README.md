@@ -30,7 +30,7 @@
 
 ### 微信启动
 
-- [API启动器来源](https://github.com/kawika-git/wechatAPI)
+- [API启动器来源](https://github.com/WeChatAPIs/WeChatAPI)
 
 ### 启动程序
 
@@ -41,7 +41,7 @@
 
 ## 依赖 📦
 
-项目依赖于 [wechatAPI](https://github.com/kawika-git/wechatAPI)。请确保安装所有必要的依赖。
+项目依赖于 [wechatAPI](https://github.com/WeChatAPIs/WeChatAPI)。请确保安装所有必要的依赖。
 
 ## 常问问题
 
