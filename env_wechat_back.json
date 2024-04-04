@@ -1,0 +1,38 @@
+{
+  "微信id | wxid_n8qx92ipocjk29": {
+    "是否启用 | enable": true,
+    "是否启用AI对话 | enableChat": true,
+    "管理员id | managementWechatId": "wxid_xxx",
+    "api地址 | requestUrl": "http://127.0.0.1:8888/api/",
+    "程序启动后自动设置消息回调地址 | callbackUrl": "http://127.0.0.1:18000/weixinCallback",
+    "群prompt,每个群都可以设置一个 | chatRoomPrompt": {
+      "群 xxx@chatroom | xxx@chatroom": {
+        "群是发送文本还是图片 | type": "text",
+        "prompt": "模拟一个自信且擅长交际的‘渣男’角色，他对女性使用不超过100字的简短回答。这个角色在对话中运用赞美和恭维来吸引女性注意，以轻松幽默的方式回应，显示自信。面对女生的不满，他巧妙地使用简短的甜言蜜语和模糊的承诺回应，目的是保持对方的兴趣，但不认真对待关系。他的回复避免冒犯或不尊重，确保对话在友好和轻松的氛围中进行。",
+        "最大返回长度 | maxCount": 200
+      },
+      "群 xxx@chatroom | xxxx@chatroom": {
+        "群是发送文本还是图片 | type": "image",
+        "图片大小 | image_size":  "1024x1024",
+        "使用哪个模型 | image_model": "dall-e-3",
+        "生成什么质量 | image_quality": "hd"
+      }
+    },
+    "免费次数 | freeCount": {
+      "文本免费次数 | text":10,
+      "图片免费次数 | image": 2
+    },
+    "被添加好友后默认回复 | defaultReply": "体验AI请回复以下任何以下关键词：\n渣男群\n技术群\n回复【合作】可呼叫管理员",
+    "关键字回复 完全匹配 | msgReplay": [
+      {
+        "关键字 | tag": "合作",
+        "类型 呼叫管理员 | replaceType": "callAdmin"
+      },
+      {
+        "关键字 | tag": "渣男群",
+        "类型 邀请进群 | replaceType": "inviteGroup",
+        "群id | groupId": "xxxxxxx@chatroom"
+      }
+    ]
+  }
+}
