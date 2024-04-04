@@ -20,14 +20,14 @@ def insert_wait_verify_friend(wechatId, encryptUserName, ticket, content, wxid):
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO t_wait_verify_friend (wechatId, encryptUserName, ticket, content, wxid) VALUES (?, ?, ?, ?, ?)",
+        'INSERT INTO t_wait_verify_friend (wechatId, encryptUserName, ticket, content, wxid,create_time) VALUES (?, ?, ?, ?, ?,datetime("now","localtime"))',
         (wechatId, encryptUserName, ticket, content, wxid))
     conn.commit()
     cursor.close()
     conn.close()
 
 
-def select_wait_verify_friend():
+def select_wait_verify_friend(autoWechat):
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
     cursor.execute('''SELECT id, wechatId, encryptUserName, ticket, content, wxid, create_time
@@ -35,9 +35,9 @@ def select_wait_verify_friend():
     WHERE id = (
         SELECT MIN(id)
         FROM t_wait_verify_friend AS b
-        WHERE a.wechatId = b.wechatId
+        WHERE a.wechatId = b.wechatId and b.wechatId in (%s)
     );
-    ''')
+    ''' % ','.join('?'*len(autoWechat)), autoWechat)
     data = cursor.fetchall()
     return data
 

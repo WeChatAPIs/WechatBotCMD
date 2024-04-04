@@ -1,7 +1,8 @@
 {
-  "微信id | wxid_n8qx92ipocjk29": {
+  "微信id | wxid_xxxxx": {
     "是否启用 | enable": true,
     "是否启用AI对话 | enableChat": true,
+    "是否启用自动加好友 | enableAutoVerify": true,
     "管理员id | managementWechatId": "wxid_xxx",
     "api地址 | requestUrl": "http://127.0.0.1:8888/api/",
     "程序启动后自动设置消息回调地址 | callbackUrl": "http://127.0.0.1:18000/weixinCallback",
@@ -16,20 +17,27 @@
         "图片大小 | image_size":  "1024x1024",
         "使用哪个模型 | image_model": "dall-e-3",
         "生成什么质量 | image_quality": "hd"
+      },
+      "群 xxx@chatroom | xxxxx@chatroom": {
+        "去水印，只有配置了该群，才能在群里去水印 | type": "deWaterMark"
       }
     },
-    "免费次数 | freeCount": {
-      "文本免费次数 | text":10,
-      "图片免费次数 | image": 2
+    "默认语 | defaultPrompt": {
+      "cos存储视频号内容回复 | cosDeWaterMark": "解析完成，请在30分钟内完成下载，否则将无法下载\n\n",
+      "被添加好友后默认回复 | defaultReply": "体验AI请回复以下任何一个关键词：\n搭讪\n技术群\n回复【合作】可呼叫管理员"
     },
-    "被添加好友后默认回复 | defaultReply": "体验AI请回复以下任何以下关键词：\n渣男群\n技术群\n回复【合作】可呼叫管理员",
+    "免费次数 | freeCount": {
+      "文本免费次数 -1则表示不限制 | text":10,
+      "图片免费次数 -1则表示不限制 | image": 2,
+      "去水印免费次数 -1则表示不限制 | deWaterMark": 2
+    },
     "关键字回复 完全匹配 | msgReplay": [
       {
         "关键字 | tag": "合作",
         "类型 呼叫管理员 | replaceType": "callAdmin"
       },
       {
-        "关键字 | tag": "渣男群",
+        "关键字用户发送内容完全匹配拉到那个群 | tag": "进入去水印群",
         "类型 邀请进群 | replaceType": "inviteGroup",
         "群id | groupId": "xxxxxxx@chatroom"
       }

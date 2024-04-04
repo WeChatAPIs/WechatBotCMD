@@ -198,12 +198,11 @@ def get_enterprise_moments(wechat_id, openIMUserName, startId=None):
 def build_moments_media_list(wechat_id, image_urls):
     mediaItemList = ""
     for url in image_urls:
-        url = "C:\\Users\\Administrator\\Desktop\\th.jpg"
         data = upload_moments_image(wechat_id, url)
-        filePath, md5 = WechatUtils.getFilePathAndMd5(url)
+        file_path, md5 = WechatUtils.getFilePathAndMd5(url)
 
         # 获取filePath文件的大小和宽高
-        fileData = FileUtils.get_file_info(filePath)
+        fileData = FileUtils.get_file_info(file_path)
 
         token_prefix = IdUtils.generate_random_string(67)
         media_url_token = IdUtils.generate_custom_random_string(token_prefix, 90)
@@ -243,7 +242,7 @@ def build_moments_media_list(wechat_id, image_urls):
 # 发布朋友圈
 def send_moments(wechat_id, content, image_urls):
     """
-    发布朋友圈 todo 没测试,api可用，该方法还没测试
+    发布朋友圈
     :param wechat_id: 微信id
     :param content: 文本内容
     :param image_urls: 图片url列表
@@ -266,8 +265,9 @@ def send_moments(wechat_id, content, image_urls):
         "mediaList": send_moments_media_template_res
     }
     xml_data = config_loader.SEND_MOMENTS_TEMPLATE.format(**xml_base_json)
-    req = {
-        "type": 4,
-        "objectDesc": xml_data,
-    }
-    return WechatUtils._post_wx_request(wechat_id, req)
+    print(xml_data)
+    # req = {
+    #     "type": 4,
+    #     "objectDesc": xml_data,
+    # }
+    # return WechatUtils._post_wx_request(wechat_id, req)

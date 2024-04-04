@@ -15,7 +15,6 @@ class SendMsgNativeApi:
 # 发送文本消息
 def send_text_message_base(wechat_id, userIdOrGroupId, content, atUserList=[]):
     # 如果atUserList不为空，则查找atUserList中的用户，如果找到，则在content中添加@xxx
-    # todo 有些号不是wxid_开头，但可能会出现和微信团队、文件助手发，需要谨慎
     # if not (userIdOrGroupId.startswith("wxid_") or userIdOrGroupId.endswith("@chatroom")):
     #     raise Exception(f"userIdOrGroupId必须是群id，且长度不能超过100,{userIdOrGroupId}")
     if content is None or content == '':
@@ -37,6 +36,7 @@ def send_text_message_base(wechat_id, userIdOrGroupId, content, atUserList=[]):
                                             "msgContent": content,
                                             "atUserList": atUserList
                                         })["msgSvrID"]
+
 
 def send_text_message(wechat_id, userIdOrGroupId, content):
     """
@@ -67,7 +67,7 @@ def send_image_message(wechat_id, userIdOrGroupId, filePath):
 
 
 def send_image_base64_message(wechat_id, userIdOrGroupId, base64Str):
-    # 将base64转换为图片 图片都是api买来的保存到本地别删了
+    # 将base64转换为图片
     imgdata = base64.b64decode(base64Str)
     today = datetime.now().strftime('%Y-%m-%d')
     directory = f"gen_image/{today}/"

@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 from tqdm import tqdm
@@ -67,18 +68,19 @@ def decrypt_channel_video(wechat_id, inputFile, outputFile, decodeKey, encLength
         "type": 10060,
         "inputFile": inputFile,
         "outputFile": outputFile,
-        "decodeKey": decodeKey,
-        "encLength": encLength,
+        "decodeKey": int(decodeKey),
+        "encLength": int(encLength),
     }
 
     resdata = WechatUtils._post_wx_request(wechat_id, req)
+    # 删除inputFile
+    os.remove(inputFile)
     return resdata
 
 
 # 获取推荐内容
 def get_recommend_channel(wechat_id, lastBuffer=None):
     """
-    todo 获取推荐内容
     :param wechat_id: 微信id
     :param lastBuffer: 指定结果的起始点，从返回的内容中获取
     :return:
@@ -165,7 +167,7 @@ def get_channel_comment_detail(wechat_id, channel_user_id, objectId, objectNonce
         req["sessionBuffer"] = sessionBuffer
 
     resdata = WechatUtils._post_wx_request(wechat_id, req)
-    return resdata
+    return resdata["data"]
 
 
 # 获取我的关注列表
@@ -404,3 +406,53 @@ def download_video(url, urlToken, save_path):
             size = file.write(data)
             bar.update(size)
     return int(response.headers.get('x-enclen', 0))
+
+
+def download_videoFromChatRoom(wechat_id, channel_user_id, objectId, objectNonceId):
+    """
+    下载视频号作品
+    :param wechat_id: 微信id
+    :param channel_user_id: 作者ID
+    :param objectId: 作品id
+    :param objectNonceId: 作品nonceId
+    :return:
+    """
+    data = get_channel_comment_detail(wechat_id, channel_user_id, objectId, objectNonceId)
+    data = json.loads(data)
+    url = data["object"]["object_desc"]["media"][0]["url"]
+    url_token = data["object"]["object_desc"]["media"][0]["url_token"]
+    decode_key = data["object"]["object_desc"]["media"][0]["decode_key"]
+    nickName = data["object"]["nickname"]
+    description = data["object"]["object_desc"]["description"]
+
+
+    # channel 目录不存在则自动创建
+    if not os.path.exists("channel"):
+        os.makedirs("channel")
+    # 获取当前目录的绝对路径
+    filePath = os.path.abspath("channel")
+    storeMp4FilePath = filePath + os.sep + objectId + ".mp4"
+    storeDataFilePath = filePath + os.sep + objectId + "_.data"
+    # 查看是否存在以start_data_path开头的文件
+    allFile = os.listdir(filePath)
+    if os.path.exists(storeMp4FilePath):
+        return storeMp4FilePath,nickName,description
+
+    for file in allFile:
+        if file.startswith(objectId + "_"):
+            enclen = int(file.split("_")[1])
+            dekey = int(file.split("_")[2])
+            # 获取file的绝对路径
+            file = filePath + os.sep + file
+            # 存在则直接解密
+            decrypt_channel_video(wechat_id, file, storeMp4FilePath, dekey, enclen)
+            return storeMp4FilePath,nickName,description
+
+
+
+    enclen = download_video(url, url_token, storeDataFilePath)
+    # 变更文件名追加enclen
+    final_data_path = storeDataFilePath.replace("_", "_" + str(enclen) + "_" + decode_key + "_")
+    os.rename(storeDataFilePath, final_data_path)
+    decrypt_channel_video(wechat_id, final_data_path, storeMp4FilePath, decode_key, enclen)
+    return storeMp4FilePath, nickName, description
