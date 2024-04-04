@@ -15,7 +15,7 @@ The WeChat Bot is a project developed based on Python 3.11, utilizing API calls 
 - **WeChat Recall Protection (Recall Message Callback)**
 
 ## No Watermark Bot Here
-- **✨Seeking Stars✨** [The strongest watermark remover bot on the web](https://github.com/kawika-git/WeChat-Video-Dewartermark)
+- **✨Seeking Stars✨** [The strongest watermark remover bot on the web](https://github.com/WeChatAPIs/WeChat-Video-Dewartermark)
 - Supports  WechatChannels、 TikTok、BiliBili、Youtube、Instagram、 Kuaishou, Xiaohongshu, Weibo, and other major self-media platforms
 
 ## System Requirements 💻
@@ -27,7 +27,7 @@ The WeChat Bot is a project developed based on Python 3.11, utilizing API calls 
 
 ### WeChat Startup
 
-- [API Launcher Source](https://github.com/kawika-git/wechatAPI)
+- [API Launcher Source](https://github.com/WeChatAPIs/wechatAPI)
 
 ### Starting the Program
 
@@ -38,7 +38,7 @@ The WeChat Bot is a project developed based on Python 3.11, utilizing API calls 
 
 ## Dependencies 📦
 
-The project depends on [wechatAPI](https://github.com/kawika-git/wechatAPI). Please ensure to install all necessary dependencies.
+The project depends on [wechatAPI](https://github.com/WeChatAPIs/wechatAPI). Please ensure to install all necessary dependencies.
 
 ## Frequently Asked Questions
 
