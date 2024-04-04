@@ -28,8 +28,8 @@ class RequestHandler:
     def handle_gpt_request(self, user_input):
         return self.chatgpt_client.get_chat_response(**user_input)
 
-    async def handle_weixin_callback(self, user_input):
-        await self.wechatService.handle_wechat_message(user_input)
+    def handle_weixin_callback(self, user_input):
+        self.wechatService.handle_wechat_message(user_input)
 
     def poll_weixin_api(self, wechat_pull_url):
         # 循环调用微信API,获取消息

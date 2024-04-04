@@ -70,7 +70,7 @@ class WechatMsgHandle:
             self.userChatCount[wechatId][userKey] = 0
         self.userChatCount[wechatId][userKey] += 1
 
-    async def handle_user_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body):
+    def handle_user_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body):
         debugAndconnect =  self.checkDebugConnect(wechatId, fromWechatId, msgContent, msgXml, response_content_body)
         if not debugAndconnect:
             return
@@ -90,7 +90,7 @@ class WechatMsgHandle:
             # 如果是管理员发的消息
         adminMsgFlag = self.chekAdminMsgFlag(wechatId, response_content_body)
         # 如果开启聊天功能
-        await self.getAiChatResponse(wechatId, fromWechatId, msgContent)
+        self.getAiChatResponse(wechatId, fromWechatId, msgContent)
 
         return
     def checkDebugConnect(self, wechatId, fromWechatId, msgContent, msgXml, response_content_body):
@@ -111,7 +111,7 @@ class WechatMsgHandle:
                 return True
         return False
 
-    async def handle_group_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body):
+    def handle_group_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body):
         # 如果reversed1中atuserlist标签中包含自己的id，说明是@自己的消息
         send_content = msgContent.split(":\n")
         group_mes_send_user, msgContent = send_content[0], send_content[1]
@@ -121,7 +121,7 @@ class WechatMsgHandle:
         adminMsgFlag = self.chekAdminMsgFlag(wechatId, response_content_body)
         if self.getChatRoomType(wechatId, fromWechatId) == "moments" and adminMsgFlag:
             # 如果是朋友圈消息 ,并且是管理原消息，则开始发送朋友圈
-            await self.push_moments_message(wechatId, "text", fromWechatId, msgContent, msgXml, response_content_body)
+            self.push_moments_message(wechatId, "text", fromWechatId, msgContent, msgXml, response_content_body)
             return
 
         debugAndconnect = self.checkDebugConnect(wechatId, fromWechatId, msgContent, msgXml, response_content_body)
@@ -131,10 +131,10 @@ class WechatMsgHandle:
         # 开启了chat聊天 并且被@了
         if wechatId in msgXml and self.getChatRoomCanAi(wechatId, fromWechatId):
             # 调用chatgpt回复
-            await self.getAiChatResponse(wechatId, group_mes_send_user, msgContent,
+            self.getAiChatResponse(wechatId, group_mes_send_user, msgContent,
                                          fromWechatId)
 
-    async def handle_group_image_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml,
+    def handle_group_image_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml,
                                          response_content_body):
         send_content = msgContent.split(":\n")
         group_mes_send_user, msgContent = send_content[0], send_content[1]
@@ -143,12 +143,12 @@ class WechatMsgHandle:
         adminMsgFlag = self.chekAdminMsgFlag(wechatId, response_content_body)
         if self.getChatRoomType(wechatId, fromWechatId) == "moments" and adminMsgFlag:
             # 如果是朋友圈消息 ,并且是管理员消息，则准备发朋友圈
-            await self.push_moments_message(wechatId, "image", fromWechatId, msgContent, msgXml, response_content_body)
+            self.push_moments_message(wechatId, "image", fromWechatId, msgContent, msgXml, response_content_body)
             return
 
     pass
 
-    async def getAiChatResponse(self, wechatId, userId, msgContent, groupId=None):
+    def getAiChatResponse(self, wechatId, userId, msgContent, groupId=None):
         if not WechatConfig_enable_gpt[wechatId]:
             return
         type = "text" if not groupId else self.getChatRoomType(wechatId, groupId)
@@ -168,7 +168,7 @@ class WechatMsgHandle:
         if type == "text":
             maxCount = None if not groupId else self.getChatRoomMaxCount(wechatId, groupId)
             initPrompt = None if not groupId else self.getChatRoomPrompt(wechatId, groupId)
-            response, total_tokens = await self.chatgpt_client.get_chat_response(chat_id=chatId, query=msgContent,prompt=initPrompt, maxCount=maxCount)
+            response, total_tokens = self.chatgpt_client.get_chat_response(chat_id=chatId, query=msgContent,prompt=initPrompt, maxCount=maxCount)
             # response, total_tokens = msgContent, 0
             # 调用微信发送消息接口
             SendMsgNativeApi.send_text_message_base(wechatId, groupId if groupId else userId, response, [userId] if groupId else [])
@@ -178,7 +178,7 @@ class WechatMsgHandle:
             imageModel, imageSize, imageQuality = chatRoomGroup["image_model"], chatRoomGroup["image_size"], \
                 chatRoomGroup["image_quality"]
 
-            b64_json = await self.chatgpt_client.generate_image(msgContent, imageModel, imageSize, imageQuality)
+            b64_json = self.chatgpt_client.generate_image(msgContent, imageModel, imageSize, imageQuality)
             SendMsgNativeApi.send_image_base64_message(wechatId, groupId if groupId else userId, b64_json)
             # 发送引用消息，但没找到@的方法 先文本@吧
             SendMsgNativeApi.send_text_message_base(wechatId, groupId if groupId else userId, "好咯好咯，我已经帮你处理好啦~", [userId] if groupId else [])
@@ -246,7 +246,7 @@ class WechatMsgHandle:
             return
         pass
 
-    async def handle_channel_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body,
+    def handle_channel_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml, response_content_body,
                                      xml_dict):
         groupId = None
         chatType = "deWaterMark"
@@ -279,8 +279,10 @@ class WechatMsgHandle:
         # 如果开启了COS 则上传到COS
         if self.cos_client.checkOpen():
             try:
-                SendMsgNativeApi.send_quote_message(wechatId, fromWechatId, msgId, "解析成功，文件较大，请耐心等待~",
-                                                    finderDescription, senderUserName)
+                SendMsgNativeApi.send_text_message_base(wechatId
+                                                        , groupId if groupId else senderUserName
+                                                        , "解析成功，文件较大，请耐心等待~"
+                                                        , [senderUserName] if groupId else [])
                 mp4FilePath, _, _ = ChannelNativeApi.download_videoFromChatRoom(wechatId, finderUserName, objectId,
                                                                                 objectNonceId)
                 if not mp4FilePath:
@@ -297,10 +299,13 @@ class WechatMsgHandle:
                 basePrompt += cos_url + "\n"
                 basePrompt += "\n作者：" + finderNickName
                 basePrompt += "\n标题：" + finderDescription
-                SendMsgNativeApi.send_quote_message(wechatId, fromWechatId, msgId, basePrompt, finderDescription,
-                                                    senderUserName)
+                SendMsgNativeApi.send_text_message_base(wechatId
+                                                        , groupId if groupId else senderUserName
+                                                        , basePrompt
+                                                        , [senderUserName] if groupId else [])
                 self.addUserToken(wechatId, senderUserName, chatType, 0)
             except Exception as e:
+                print(e)
                 SendMsgNativeApi.send_text_message_base(wechatId, fromWechatId,
                                                         "解码失败，请稍后再试，如仍失败请联系管理员")
                 return
@@ -308,7 +313,7 @@ class WechatMsgHandle:
         # SendMsgNativeApi.send_file_message(wechatId, fromWechatId, mp4FilePath)
         pass
 
-    async def push_moments_message(self, wechatId, mesType, fromWechatId, msgContent, msgXml, response_content_body):
+    def push_moments_message(self, wechatId, mesType, fromWechatId, msgContent, msgXml, response_content_body):
         if wechatId not in self.moments_msg_cache or msgContent == "清除":
             self.moments_msg_cache[wechatId] = {}
             self.moments_msg_cache[wechatId]["text"] = None

@@ -50,7 +50,7 @@ class OpenAIHelper:
         return len(self.conversations[chat_id]), OpenAIUtils.count_tokens(self.conversations[chat_id],
                                                                           self.config['model'])
 
-    async def get_chat_response(self, chat_id: int, query: str, prompt: str = None, maxCount: int = None) -> tuple[
+    def get_chat_response(self, chat_id: int, query: str, prompt: str = None, maxCount: int = None) -> tuple[
                                                                                                                  Any, str] | \
                                                                                                              tuple[
                                                                                                                  str, int]:
@@ -67,7 +67,7 @@ class OpenAIHelper:
         plugins_used = ()
         response = self.__common_get_chat_response(chat_id, query, prompt=prompt, maxCount=maxCount)
         if self.config['enable_functions']:
-            response, plugins_used = await self.__handle_function_call(chat_id, response)
+            response, plugins_used = self.__handle_function_call(chat_id, response)
             if is_direct_result(response):
                 return response.choices[0].message.content.strip(), response.usage.total_tokens
 
@@ -99,7 +99,7 @@ class OpenAIHelper:
 
         return answer, response.usage.total_tokens
 
-    async def get_chat_response_stream(self, chat_id: int, query: str):
+    def get_chat_response_stream(self, chat_id: int, query: str):
         """
         Stream response from the GPT model.
         :param chat_id: The chat ID
@@ -107,7 +107,7 @@ class OpenAIHelper:
         :return: The answer from the model and the number of tokens used, or 'not_finished'
         """
         plugins_used = ()
-        response = await self.__common_get_chat_response(chat_id, query, stream=True)
+        response = self.__common_get_chat_response(chat_id, query, stream=True)
         if self.config['enable_functions']:
             response, plugins_used = self.__handle_function_call(chat_id, response, stream=True)
             if is_direct_result(response):
@@ -115,7 +115,7 @@ class OpenAIHelper:
                 return
 
         answer = ''
-        async for item in response:
+        for item in response:
             if 'choices' not in item or len(item.choices) == 0:
                 continue
             delta = item.choices[0].delta
@@ -199,7 +199,7 @@ class OpenAIHelper:
         except Exception as e:
             raise e
 
-    async def __handle_function_call(self, chat_id, response, stream=False, times=0, plugins_used=()):
+    def __handle_function_call(self, chat_id, response, stream=False, times=0, plugins_used=()):
         # todo async
         function_name = ''
         arguments = ''
@@ -233,7 +233,7 @@ class OpenAIHelper:
                 return response, plugins_used
 
         logging.info(f'Calling function {function_name} with arguments {arguments}')
-        function_response = await self.plugin_manager.call_function(function_name, arguments)
+        function_response = self.plugin_manager.call_function(function_name, arguments)
 
         if function_name not in plugins_used:
             plugins_used += (function_name,)
@@ -260,9 +260,9 @@ class OpenAIHelper:
             "function_call": 'auto' if times < self.config['functions_max_consecutive_calls'] else 'none',
         }
         response = self.openai_client.chat.completions.create(**chat_req)
-        return await self.__handle_function_call(chat_id, response, stream, times + 1, plugins_used)
+        return self.__handle_function_call(chat_id, response, stream, times + 1, plugins_used)
 
-    async def generate_image(self, prompt: str, model: str, size: str, quality: str) -> str:
+    def generate_image(self, prompt: str, model: str, size: str, quality: str) -> str:
         """
         async
         Generates an image from the given prompt using DALL·E model.

@@ -34,7 +34,7 @@ class DeeplTranslatePlugin(Plugin):
             },
         }]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         if self.api_key.endswith(':fx'):
             url = "https://api-free.deepl.com/v2/translate"
         else:

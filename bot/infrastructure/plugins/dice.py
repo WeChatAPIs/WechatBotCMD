@@ -28,7 +28,7 @@ class DicePlugin(Plugin):
             },
         }]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         return {
             'direct_result': {
                 'kind': 'dice',

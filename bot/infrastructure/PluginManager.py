@@ -40,7 +40,7 @@ class PluginManager:
         """
         return [spec for specs in map(lambda plugin: plugin.get_spec(), self.plugins) for spec in specs]
 
-    async def call_function(self, function_name, arguments):
+    def call_function(self, function_name, arguments):
         """
         根据提供的名称和参数调用函数
         Call a function based on the name and parameters provided
@@ -48,7 +48,7 @@ class PluginManager:
         plugin = self.__get_plugin_by_function_name(function_name)
         if not plugin:
             return json.dumps({'error': f'Function {function_name} not found'})
-        return json.dumps(await plugin.execute(function_name, **json.loads(arguments)), default=str)
+        return json.dumps(plugin.execute(function_name, **json.loads(arguments)), default=str)
 
     def get_plugin_source_name(self, function_name) -> str:
         """

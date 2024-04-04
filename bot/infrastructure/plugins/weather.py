@@ -58,7 +58,7 @@ class WeatherPlugin(Plugin):
             }
         ]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         url = f'https://api.open-meteo.com/v1/forecast' \
               f'?latitude={kwargs["latitude"]}' \
               f'&longitude={kwargs["longitude"]}' \

@@ -45,7 +45,7 @@ class NowTimePlugin(Plugin):
             }
         ]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         # 返回当前时间
         current_datetime = datetime.now()
         # 计算明天的日期
