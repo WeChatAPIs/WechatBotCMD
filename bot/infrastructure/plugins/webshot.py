@@ -26,7 +26,7 @@ class WebshotPlugin(Plugin):
         characters = string.ascii_letters + string.digits
         return ''.join(random.choice(characters) for _ in range(length))
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         try:
             image_url = f'https://image.thum.io/get/maxAge/12/width/720/{kwargs["url"]}'
             

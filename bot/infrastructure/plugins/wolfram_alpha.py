@@ -34,7 +34,7 @@ class WolframAlphaPlugin(Plugin):
             }
         }]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         client = wolframalpha.Client(self.app_id)
         res = client.query(kwargs['query'])
         try:

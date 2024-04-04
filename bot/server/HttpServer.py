@@ -18,11 +18,14 @@ request_handler = RequestHandler()
 callbackMes = []
 lastPullTime = time.time()
 
+from concurrent.futures import ThreadPoolExecutor
 
 @app.get('/')
 def index():
     return "Hello World"
 
+executor = ThreadPoolExecutor(max_workers=10)  # 创建线程池，可以根据需求调整线程数
+import asyncio
 
 @app.post('/weixinCallback')
 async def weixinCallback(request: Request):
@@ -33,7 +36,8 @@ async def weixinCallback(request: Request):
         callbackMes.append(user_input)
     else:
         callbackMes = []
-    await request_handler.handle_weixin_callback(user_input)  # 异步调用处理函数
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(executor, request_handler.handle_weixin_callback, user_input)
     return {"response": "success"}
 
 
@@ -50,7 +54,7 @@ def weixinCallbackMsg():
 
 # 定义全局异常处理器
 @app.exception_handler(Exception)
-async def handle_exception(request: Request, exc: Exception):
+def handle_exception(request: Request, exc: Exception):
     # 获取异常的堆栈信息
     exc_info = traceback.format_exc()
     # 记录错误日志

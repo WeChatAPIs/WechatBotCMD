@@ -28,7 +28,7 @@ class YouTubeAudioExtractorPlugin(Plugin):
             },
         }]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         link = kwargs['youtube_link']
         try:
             video = YouTube(link)

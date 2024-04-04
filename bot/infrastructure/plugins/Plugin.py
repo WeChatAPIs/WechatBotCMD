@@ -26,7 +26,7 @@ class Plugin(ABC):
         pass
 
     @abstractmethod
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         """
         执行插件并返回JSON可序列化响应
         Execute the plugin and return a JSON serializable response

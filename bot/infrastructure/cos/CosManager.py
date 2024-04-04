@@ -39,6 +39,12 @@ class CosManager:
 
     def checkOpen(self):
         return self.enable == "true"
+    def existObject(self, fileId):
+        try:
+            self.cos_client.head_object(self.bucket, fileId)
+            return True
+        except Exception as e:
+            return False
 
     def put_object(self, file_path):
         # 文件不存在
@@ -47,15 +53,13 @@ class CosManager:
         # 获取文件名
         file_name = os.path.basename(file_path)
 
-        has_object = self.cos_client.object_exists(
-            Bucket=self.bucket,
-            Key=file_name)
+        has_object = self.existObject(file_name)
         if not has_object:
             self.cos_client.upload_file(
                 Bucket=self.bucket,
                 LocalFilePath=file_path,
                 Key=file_name,
-                PartSize=1,
+                PartSize=5,
                 MAXThread=10,
                 EnableMD5=False
             )
@@ -75,9 +79,7 @@ class CosManager:
             time.sleep(60)
 
     def del_object(self, id, file_key):
-        has_object = self.cos_client.object_exists(
-            Bucket=self.bucket,
-            Key=file_key)
+        has_object = self.existObject(file_key)
         if has_object:
             self.cos_client = self.cos_client.delete_object(
                 Bucket=self.bucket,

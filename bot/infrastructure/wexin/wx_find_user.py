@@ -4,6 +4,7 @@ from .wx_get_all_user_info import GETAllUserInfoPlugin
 from bot.infrastructure.plugins.Plugin import Plugin
 
 
+# Author: https://github.com/stumpyfr
 class FindUserPlugin(Plugin):
 
     def find_userName_by_nickName(self, nickName):
@@ -48,6 +49,6 @@ class FindUserPlugin(Plugin):
         }
         ]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         nickName = kwargs['nickName']
         return self.find_userName_by_nickName(nickName)

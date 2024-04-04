@@ -4,6 +4,7 @@ from .httputils import _post_wx_request
 from bot.infrastructure.plugins.Plugin import Plugin
 
 
+# Author: https://github.com/stumpyfr
 class SendTextMessage(Plugin):
 
     def send_text_message(self, userName, msgContent):
@@ -47,7 +48,7 @@ class SendTextMessage(Plugin):
         }
         ]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         user_name = kwargs['user_name']
         msg_content = kwargs['msg_content']
         return self.send_text_message(user_name, msg_content)

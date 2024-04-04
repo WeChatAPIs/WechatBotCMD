@@ -131,5 +131,5 @@ class GETAllUserInfoPlugin(Plugin):
         }
         ]
 
-    async def execute(self, function_name, **kwargs) -> list[Any] | None:
+    def execute(self, function_name, **kwargs) -> list[Any] | None:
         return self.get_all_user_info()

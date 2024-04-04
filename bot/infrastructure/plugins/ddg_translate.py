@@ -26,6 +26,6 @@ class DDGTranslatePlugin(Plugin):
             },
         }]
 
-    async def execute(self, function_name, **kwargs) -> Dict:
+    def execute(self, function_name, **kwargs) -> Dict:
         with DDGS() as ddgs:
             return ddgs.translate(kwargs['text'], to=kwargs['to_language'])
