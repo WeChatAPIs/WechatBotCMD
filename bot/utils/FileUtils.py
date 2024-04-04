@@ -7,7 +7,7 @@ from moviepy.editor import VideoFileClip
 
 def get_file_info(file_path) -> object:
     try:
-        # 如果是mac电脑，返回默认值，因为我有在mac电脑开发容易报错
+        # 如果是mac电脑，返回默认值
         if os.name == "posix":
             # 生成随机32位字符串
             return {

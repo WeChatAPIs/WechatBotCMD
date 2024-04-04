@@ -1,10 +1,11 @@
+import asyncio
 import logging
 import random
 import threading
 import time
 
 from bot.config import config_loader
-from bot.config.config_loader import WechatConfig_pullMesUrl, WechatConfig_defaultReply, App_Run_Status
+from bot.config.config_loader import WechatConfig_pullMesUrl, WechatConfig_defaultPrompt
 from bot.data import DbWaitVerifyFriend
 from bot.infrastructure.chatgpt.OpenAIHelper import OpenAIHelper
 from bot.infrastructure.wexin import WechatUtils, MsgProcessorNativeApi, ContactNativeApi, SendMsgNativeApi
@@ -36,8 +37,8 @@ class RequestHandler:
             try:
                 response_data = WechatUtils.pull_message(wechat_pull_url)
                 if response_data is not None:
-                    self.wechatService.handle_wechat_message(response_data)
-                    # asyncio.run(self.wechatService.handle_wechat_message(response_data))
+                    # self.wechatService.handle_wechat_message(response_data)
+                    asyncio.run(self.wechatService.handle_wechat_message(response_data))
             except Exception as e:
                 log.error(f"Exception during API call: {e}")
             time.sleep(5)
@@ -47,11 +48,15 @@ class RequestHandler:
         MsgProcessorNativeApi.add_http_processor_forAll()
 
     def handle_verify_friend(self):
+        autoWechat = []
+        for key in config_loader.WechatConfig_enable_auto_verify:
+            if config_loader.WechatConfig_enable_auto_verify[key]:
+                autoWechat.append(key)
         while config_loader.App_Run_Status:
             time.sleep(random.randint(10, 15))
             # 通过好友验证
-            data = DbWaitVerifyFriend.select_wait_verify_friend()
-            log.info("handle verify friend,size:" + str(len(data)))
+            data = DbWaitVerifyFriend.select_wait_verify_friend(autoWechat)
+            # log.info("handle verify friend,size:" + str(len(data)))
             for item in data:
                 id, wechatId, encryptUserName, ticket = item[0], item[1], item[2], item[3]
                 ContactNativeApi.accept_friend(wechatId, encryptUserName, ticket)
@@ -59,6 +64,6 @@ class RequestHandler:
                 log.info(f"accept friend {wechatId} {id}")
             for replaceItem in data:
                 wechatId, content, wxid = replaceItem[1], replaceItem[4], replaceItem[5]
-                if wechatId in WechatConfig_defaultReply:
+                if wechatId in WechatConfig_defaultPrompt:
                     SendMsgNativeApi.send_text_message_base \
-                        (wechatId, wxid, WechatConfig_defaultReply[wechatId], wxid)
+                        (wechatId, wxid, WechatConfig_defaultPrompt[wechatId]["defaultReply"], wxid)

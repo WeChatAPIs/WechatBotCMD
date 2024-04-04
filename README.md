@@ -7,16 +7,10 @@
 - 上下文记忆：自动记忆与用户的对话上下文，如果10分钟内无回复，则忘记上下文。
 - 对话历史限制：最多记忆10条对话历史，确保交互的连贯性。
 - 自动通过好友、自动拉群
+- 视频号视频下载
 - 自动发朋友圈、自动点赞
 - 直播间自动发弹幕
 - 视频号自动回复等
-
-## 功能 🌟
-
-- 高情商回复 💬
-- 头像制作 🎨
-- AI绘画、梦境展现 🎞️
-- 多API集成处理（如天气获取、自动发朋友圈、查询币价） 🌦️
 
 ## 系统要求 💻
 
@@ -28,12 +22,14 @@
 ### 微信启动
 
 1. 将 `dll` 文件放置在与 `start_wechat.py` 同一目录下。 [DLL来源](https://github.com/kawika-git/wechatAPI)
-2. 运行 `start_wechat.py`（默认HTTP端口号为8888，可根据需要修改）。
+2. 双击 `start_wechat.py`（默认HTTP端口号为8888，可根据需要自行修改）。
 
 ### 启动程序
 
 1. 复制 `env_wechat_back.json` 文件并将其重命名为 `env_wechat.json`，然后修改文件内容。
-2. 进入 `wechatSDK` 目录，并运行 `app.py`。
+2. 打开cmd，并进去 `wechatSDK` 目录，运行 `pip -m venv venv` 并开启虚拟环境 `venv/Scripts/activate`。
+3. 运行 `pip install -r requirements.txt` 安装所有依赖。
+2. 运行 `python app.py` 启动程序。
 
 ## 依赖 📦
 

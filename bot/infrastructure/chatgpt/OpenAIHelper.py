@@ -27,6 +27,8 @@ class OpenAIHelper:
         Initializes the OpenAI helper class with the given configuration.
         :param config: A dictionary containing the GPT configuration
         """
+        if ChatGptConfig['enable'] != "true":
+            return
         self.openai_client = OpenAI(timeout=600, api_key=ChatGptConfig['api_key'], http_client=httpx.Client(
             proxies=ChatGptConfig['proxy'],
             transport=httpx.HTTPTransport(local_address="0.0.0.0"),
@@ -107,7 +109,7 @@ class OpenAIHelper:
         plugins_used = ()
         response = await self.__common_get_chat_response(chat_id, query, stream=True)
         if self.config['enable_functions']:
-            response, plugins_used = await self.__handle_function_call(chat_id, response, stream=True)
+            response, plugins_used = self.__handle_function_call(chat_id, response, stream=True)
             if is_direct_result(response):
                 yield response, '0'
                 return
@@ -143,7 +145,7 @@ class OpenAIHelper:
     )
     def __common_get_chat_response(self, chat_id: int, query: str, stream=False, prompt=None, maxCount=None):
         """
-        async
+        todo async
         Request a response from the GPT model.
         :param chat_id: The chat ID
         :param query: The query to send to the model
@@ -198,6 +200,7 @@ class OpenAIHelper:
             raise e
 
     async def __handle_function_call(self, chat_id, response, stream=False, times=0, plugins_used=()):
+        # todo async
         function_name = ''
         arguments = ''
         if stream:
@@ -294,7 +297,7 @@ class OpenAIHelper:
         Resets the conversation history.
         """
         if content is None or content == '':
-            content = ''
+            content = ''  # todo 辅助提示
         self.conversations[chat_id] = [{"role": "system", "content": content}]
 
     def __max_age_reached(self, chat_id) -> bool:
@@ -345,3 +348,29 @@ class OpenAIHelper:
             temperature=0.4
         )
         return response.choices[0]['message']['content']
+
+# No longer works as of July 21st 2023, as OpenAI has removed the billing API
+# def get_billing_current_month(self):
+#     """Gets billed usage for current month from OpenAI API.
+#
+#     :return: dollar amount of usage this month
+#     """
+#     headers = {
+#         "Authorization": f"Bearer {openai.api_key}"
+#     }
+#     # calculate first and last day of current month
+#     today = date.today()
+#     first_day = date(today.year, today.month, 1)
+#     _, last_day_of_month = monthrange(today.year, today.month)
+#     last_day = date(today.year, today.month, last_day_of_month)
+#     params = {
+#         "start_date": first_day,
+#         "end_date": last_day
+#     }
+#     response = requests.get("https://api.openai.com/dashboard/billing/usage", headers=headers, params=params)
+#     billing_data = json.loads(response.text)
+#     usage_month = billing_data["total_usage"] / 100  # convert cent amount to dollars
+#     return usage_month
+
+#
+# print(OpenAIHelper().get_chat_response(chat_id="wxid_9zj7q9q9q9q9q9q9q9q9q9q9q9q9", query="你好"))

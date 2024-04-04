@@ -86,6 +86,11 @@ class WechatCallbackMsgService:
                                    msgTime, adminMsgFlag, response_content_body):
         # 图片消息	3
         log.info(f"[handle_image_message]image message: {response_content_body}")
+        if "@chatroom" in fromWechatId:
+            await self.WechatMsgHandleHandle.handle_group_image_message(wechatId, msgId, fromWechatId, msgContent,
+                                                                        msgXml,
+                                                                        response_content_body)
+
         pass
 
     async def handle_voice_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml,
@@ -126,12 +131,19 @@ class WechatCallbackMsgService:
 
     async def handle_xml_message(self, wechatId, msgId, fromWechatId, msgContent, msgXml,
                                  msgTime, adminMsgFlag, response_content_body):
+        if "@chatroom" in fromWechatId:
+            msgContent = msgContent.split(":\n")[1]
         xml_dict = xmltodict.parse(msgContent)
-        if xml_dict["msg"]["appmsg"]["type"] == "5":
+        xml_type = xml_dict["msg"]["appmsg"]["type"]
+        if xml_type == "5":
             # 邀请入群消息
             log.info(f"[handle_xml_message]invite group message: {response_content_body}")
             return
-
+        if xml_type == "51":
+            # 视频号消息
+            await self.WechatMsgHandleHandle.handle_channel_message(wechatId, msgId, fromWechatId,
+                                                                    msgContent, msgXml, response_content_body, xml_dict)
+            return
         # XML消息	49
         log.info(f"[handle_xml_message]xml message: " + str(response_content_body))
         pass
@@ -163,8 +175,7 @@ class WechatCallbackMsgService:
     async def handle_other_msg_type(self, wechatId, msgId, fromWechatId, msgContent, msgXml,
                                     msgTime, adminMsgFlag, response_content_body):
         # 其他消息类型
-        log.info(
-            f"[handle_other_msg_type]Unknown msgType: {response_content_body['type']},data:{response_content_body}")
+        log.info(f"[handle_other_msg_type]Unknown msgType: {response_content_body['type']},data:{response_content_body}")
         pass
 
     async def handleLoginEvent(self, response_data):
@@ -201,6 +212,6 @@ class WechatCallbackMsgService:
         msgContent = response_content_body["content"]
         msgXml = response_content_body["reversed1"]
         msgTime = response_content_body["createtime"]
-        adminMsgFlag = self.WechatMsgHandleHandle.chekAdminMsgFlag(wechatId, fromWechatId)
+        adminMsgFlag = self.WechatMsgHandleHandle.chekAdminMsgFlag(wechatId, response_content_body)
         await self.switMsgType.get(case, self.handle_other_msg_type)(wechatId, msgId, fromWechatId, msgContent, msgXml,
                                                                      msgTime, adminMsgFlag, response_content_body)

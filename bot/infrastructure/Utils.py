@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 
-
 def is_direct_result(response: any) -> bool:
     """
     Checks if the dict contains a direct result that can be sent directly to the user
@@ -17,7 +16,6 @@ def is_direct_result(response: any) -> bool:
             return False
     else:
         return response.get('direct_result', False)
-
 
 def cleanup_intermediate_files(response: any):
     """

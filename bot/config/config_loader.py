@@ -6,10 +6,32 @@ from dotenv import load_dotenv
 from bot.infrastructure.chatgpt import OpenAIUtils
 
 
+def loadEmailConfig():
+    load_dotenv()
+    return {
+        'email': os.environ['EMAIL_USERNAME'],
+        'password': os.environ['EMAIL_PASSWORD'],
+        'email_notice_wx_from': os.environ['EMAIL_NOTICE_WX_FROM'],
+        'email_notice_wx_to': os.environ['EMAIL_NOTICE_WX_TO'],
+    }
+
+
+def loadCosConfig():
+    load_dotenv()
+    return {
+        "enable": os.environ['COS_ENABLE'],
+        "secret_id": os.environ['COS_SECRET_ID'],
+        "secret_key": os.environ['COS_SECRET_KEY'],
+        "region": os.environ['COS_REGION'],
+        "bucket": os.environ['COS_BUCKET']
+    }
+
+
 def loadChatGptConfig():
     load_dotenv()
     model = os.environ.get('OPENAI_MODEL', 'gpt-3.5-turbo')
     return {
+        'enable': os.environ['OPENAI_ENABLE'],
         'api_key': os.environ['OPENAI_API_KEY'],
         # 每次响应后是否显示 OpenAI 令牌使用信息
         'show_usage': os.environ.get('SHOW_USAGE', 'false').lower() == 'true',
@@ -48,7 +70,7 @@ def loadChatGptConfig():
 
 
 def loadWechatConfig():
-    # 打开并读取 JSON 文件 方便在不同的目录运行测试方法
+    # 打开并读取 JSON 文件
     try:
         with open('./env_wechat.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
@@ -111,23 +133,30 @@ WechatConfig_requestUrl = getWechatConfig("requestUrl")
 WechatConfig_free_call_ai = getWechatConfig("freeCount")
 # 微信配置变量 是否开启AI对话
 WechatConfig_enable_gpt = getWechatConfig("enableChat")
+# 微信配置变量 是否开启自动加好友
+WechatConfig_enable_auto_verify = getWechatConfig("enableAutoVerify")
 # 微信配置变量 回调地址变量
 WechatConfig_callbackUrl = getWechatConfig("callbackUrl")
 # 微信配置变量 群聊提示语
 WechatConfig_chatRoomPrompt = getWechatConfig("chatRoomPrompt")
 # 默认回复语
-WechatConfig_defaultReply = getWechatConfig("defaultReply")
+WechatConfig_defaultPrompt = getWechatConfig("defaultPrompt")
 # 默认回复
 WechatConfig_msgReplay = getWechatConfig_msgReplay("msgReplay")
 # 微信配置变量 是否开启调试模式
 WechatConfig_is_debug = getWechatConfig("debug")
 # 微信配置变量 调试模式下的微信ID
 WechatConfig_debugFromName = getWechatConfig("debugFromName")
+DOWN_FILE_PATH = os.path.abspath("channel") + os.sep
+
+if not os.path.exists(DOWN_FILE_PATH):
+    os.makedirs(DOWN_FILE_PATH)
+
 # 发朋友圈模版
 SEND_MOMENTS_TEMPLATE = """
 <TimelineObject>
 	<id>
-		<![CDATA[{{momentsId}}]]>
+		<![CDATA[{momentsId}]]>
 	</id>
 	<username>
 		<![CDATA[{wechatId}]]>
