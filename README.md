@@ -27,7 +27,7 @@
 
 ### 微信启动
 
-1. 将 `dll` 文件放置在与 `start_wechat.py` 同一目录下。
+1. 将 `dll` 文件放置在与 `start_wechat.py` 同一目录下。 [DLL来源](https://github.com/kawika-git/wechatAPI)
 2. 运行 `start_wechat.py`（默认HTTP端口号为8888，可根据需要修改）。
 
 ### 启动程序
