@@ -25,20 +25,12 @@ The WeChat Bot is a project developed based on Python 3.11, utilizing API calls 
 
 ## Installation 🔧
 
-### WeChat Startup
-
-- [API Launcher Source](https://github.com/WeChatAPIs/wechatAPI)
-
 ### Starting the Program
 
 1. Open cmd and navigate to the `wechatSDK` directory, run `python -m venv venv` to create a virtual environment, and activate it with the command: `venv/Scripts/activate`.
 2. Continue to run `pip install -r requirements.txt` to install all dependencies in the python virtual environment.
 3. Copy the `env_wechat_back.json` file and rename it to `env_wechat.json`, then modify the content of the file (remember to remove Chinese characters and spaces before the 【|】, refer to the complete format in `env_wechat_example.json`).
 4. Run `python app.py` to start the program.
-
-## Dependencies 📦
-
-The project depends on [wechatAPI](https://github.com/WeChatAPIs/wechatAPI). Please ensure to install all necessary dependencies.
 
 ## Frequently Asked Questions
 
@@ -47,7 +39,6 @@ The project depends on [wechatAPI](https://github.com/WeChatAPIs/wechatAPI). Ple
   - After starting the program, wait for the message callback, and fill in other values in the json after receiving callback messages in groups or from friends
 - **ChatGPT does not support GPTs API, how did you do it**
   - There are some vendors providing openai proxy services, who have cracked openai's API to offer GPTs API services at a cheaper price than the official one
-  - For self-use proxy, recommended for its stability, low price, and good after-sales service: [ChatGPT Proxy Service](https://sourl.cn/p4JDca)
 - **I'm not tech-savvy, how can I get the project running**
   - Our newly hired engineers are developing a functional interface, please give our interns some time.
   - If you are interested in participating in the development of the functional interface, please contact us (willing to allocate part of the earnings as long-term commission for the developers and maintainers)
